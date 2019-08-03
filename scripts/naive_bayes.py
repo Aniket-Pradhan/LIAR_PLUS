@@ -8,6 +8,7 @@ from argparse import ArgumentParser
 from sklearn import metrics
 from sklearn import preprocessing
 from sklearn.naive_bayes import MultinomialNB, GaussianNB
+import time
 
 class naive_bayes_model:
 	def read_data(self, filename):
@@ -24,6 +25,14 @@ class naive_bayes_model:
 				tempList.append(min(tempList[3:5]))
 				self.data.append(tempList)
 				self.finalVerdicts.append(line[1])
+		if self.binary:
+			self.make_verdicts_binary()
+			for i in range(len(self.data)):
+				data_arr = self.data[i]
+				new_data_arr = [0] * 2
+				new_data_arr[0] = sum(data_arr[:3])
+				new_data_arr[1] = sum(data_arr[3:])
+				self.data[i] = new_data_arr
 
 	def final_verdicts_to_indices(self):
 		self.finalVerdictsIndices = []
@@ -43,7 +52,7 @@ class naive_bayes_model:
 
 	def naive_bayes_train(self):
 		self.model = MultinomialNB()
-		X = self.data
+		X = np.array(self.data)
 		y = self.finalVerdictsIndices
 		self.model.fit(X, y)
 
@@ -59,6 +68,15 @@ class naive_bayes_model:
 			model = pickle.load(file)
 		self.model = model
 
+	def make_verdicts_binary(self):
+		false_items = ["pants-fire", "barely-true", "false"]
+		true_items = ["half-true", "mostly-true", "true"]
+		for i in range(len(self.finalVerdicts)):
+			if self.finalVerdicts[i] in false_items:
+				self.finalVerdicts[i] = "false"
+			else:
+				self.finalVerdicts[i] = "true"
+
 	def train_data(self):
 		self.data = []
 		self.finalVerdicts = []
@@ -70,9 +88,9 @@ class naive_bayes_model:
 		self.save_data()
 
 	def test_data(self):
-		self.load_data()
 		self.data = []
 		self.finalVerdicts = []
+		self.load_data()
 		self.read_data(self.testfile)
 		self.process_data()
 		self.final_verdicts_to_indices()
@@ -91,6 +109,7 @@ class naive_bayes_model:
 		self.paths = Path()
 
 		parser = ArgumentParser()
+		parser.add_argument("--binary", default=False, help="If you want to do a binary classification, or the default six-way classification.", metavar="BOOLEAN")
 		parser.add_argument("--train", default=False, help="Want to train the model? Set as True, if you want to...", metavar="BOOLEAN")
 		parser.add_argument("--test", default=False, help="Want to test the model? Set as True, if you want to...", metavar="BOOLEAN")
 		parser.add_argument("--trainfile", help="Specify the location of the training dataset", metavar="FILE")
@@ -108,19 +127,28 @@ class naive_bayes_model:
 		self.trainfile = args.trainfile
 		self.testfile = args.testfile
 		self.modelfile = args.model
-
+		self.binary = True if args.binary == "true" else False
 		if self.train == self.test:
 			parser.error("--train and --test cannot be true or false together.")
 
-		self.classes = ["pants-fire", "barely-true", "false", "half-true", "mostly-true", "true"]
-		self.classToIndex = {
-			"pants-fire": 0,
-			"barely-true": 1,
-			"false": 2,
-			"half-true": 3,
-			"mostly-true": 4,
-			"true": 5
-		}
+		if self.binary:
+			self.classes = ["false", "true"]
+		else:
+			self.classes = ["pants-fire", "barely-true", "false", "half-true", "mostly-true", "true"]
+		if self.binary:
+			self.classToIndex = {
+				"true": 0,
+				"false": 1
+			}
+		else:
+			self.classToIndex = {
+				"pants-fire": 0,
+				"barely-true": 1,
+				"false": 2,
+				"half-true": 3,
+				"mostly-true": 4,
+				"true": 5
+			}
 
 		if self.train:
 			print("TRAINING...")
