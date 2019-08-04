@@ -19,3 +19,6 @@ class Path:
 		
 		self.models = self.base + "/models"
 		self.path_exists(self.models)
+
+		self.logs = self.base + "/temp_logs"
+		self.path_exists(self.logs)
