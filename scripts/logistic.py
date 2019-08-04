@@ -7,7 +7,7 @@ import numpy as np
 from argparse import ArgumentParser
 from sklearn import metrics
 from sklearn import preprocessing
-from sklearn.naive_bayes import MultinomialNB, GaussianNB, BernoulliNB
+from sklearn.linear_model import LogisticRegression
 import time
 
 class naive_bayes_model:
@@ -51,14 +51,7 @@ class naive_bayes_model:
 				self.processed_data[i][j] = self.data[j][i]
 
 	def naive_bayes_train(self):
-		## Accuracy format:
-		# Bernoulli > Multinomial > Gaussian for binary and six-way data
-		if self.nb_type == "BernoulliNB":
-			self.model = BernoulliNB()
-		elif self.nb_type == "GaussianNB":
-			self.model = GaussianNB()
-		else:
-			self.model = MultinomialNB()
+		self.model = self.model = LogisticRegression(random_state=0, solver='lbfgs')
 
 		X = np.array(self.data)
 		y = self.finalVerdictsIndices
@@ -67,7 +60,7 @@ class naive_bayes_model:
 
 	def save_data(self):
 		save_file_path = self.paths.models
-		filename = "/trained_data_nb.pickle"
+		filename = "/trained_data_logistic.pickle"
 		with open(save_file_path + filename, 'wb') as file:
 			pickle.dump(self.model, file)
 
@@ -123,7 +116,6 @@ class naive_bayes_model:
 		parser.add_argument("--trainfile", help="Specify the location of the training dataset", metavar="FILE")
 		parser.add_argument("--testfile", help="Specify the location of the testing dataset", metavar="FILE")
 		parser.add_argument("--model", help="Specify the location of the trained model", metavar="FILE")
-		parser.add_argument("--nb_type", help="Values: GaussianNB or BernoulliNB or MultinomialNB.", default="MultinomialNB", metavar="STRING")
 		args = parser.parse_args()
 
 		if (args.train and args.trainfile is None) or ((not args.train) and args.trainfile is not None):
@@ -137,10 +129,6 @@ class naive_bayes_model:
 		self.testfile = args.testfile
 		self.modelfile = args.model
 		self.binary = True if args.binary == "true" else False
-		self.nb_type = args.nb_type
-
-		if self.nb_type not in ["GaussianNB", "BernoulliNB", "MultinomialNB"]:
-			parser.error("Invalid NB type. Please select one of these: GaussianNB or BernoulliNB or MultinomialNB.")
 		
 		if self.train == self.test:
 			parser.error("--train and --test cannot be true or false together.")

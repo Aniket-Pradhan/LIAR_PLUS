@@ -1,1 +1,5 @@
-python naive_bayes.py --test true --testfile ../dataset/test2.tsv --model ../models/trained_data.pickle 
+# Naive-Bayes classifier
+python naive_bayes.py --test true --testfile ../dataset/test2.tsv --model ../models/trained_data_nb.pickle
+
+# Logistic Regression Classifier
+# python logistic.py --test true --testfile ../dataset/test2.tsv --model ../models/trained_data_logistic.pickle
