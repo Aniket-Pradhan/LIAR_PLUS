@@ -1,59 +1,54 @@
-Mirrored from [here](https://github.com/Tariq60/LIAR-PLUS).
+# Bad-Fake-News
+## NUS Selection Task
 
-## LIAR-PLUS
-The extended LIAR dataset for fact-checking and fake news detection released in our paper:
-[Where is Your Evidence: Improving Fact-Checking by Justification Modeling. Tariq Alhindi, Savvas Petridis and Smaranda Muresan](http://aclweb.org/anthology/W18-5513). In Proceedings of the First Workshop on Fact Extraction and VERification (FEVER) Brussels, Belgium November 1st, 2018.
-<br><br>
-This dataset has evidence sentences extracted automatically from the full-text verdict report written by journalists in Politifact. Our objective is to provide a benchmark for evidence retrieval and show empirically that including evidence information in any automatic fake news detection method (regardless of features or classifier) always results in superior performance to any method lacking such information.
-<br><br>
-Below is the description of the TSV file taken as is from the original [LIAR dataset](https://www.cs.ucsb.edu/~william/data/liar_dataset.zip), which was published in this [paper](https://www.aclweb.org/anthology/P17-2067). We added a new column at the end that has the extracted justification.
-<br>
-- Column 1: the ID of the statement ([ID].json).
-- Column 2: the label.
-- Column 3: the statement.
-- Column 4: the subject(s).
-- Column 5: the speaker.
-- Column 6: the speaker's job title.
-- Column 7: the state info.
-- Column 8: the party affiliation.
-- Columns 9-13: the total credit history count, including the current statement.
-  - 9: barely true counts.
-  - 10: false counts.
-  - 11: half true counts.
-  - 12: mostly true counts.
-  - 13: pants on fire counts.
-- Column 14: the context (venue / location of the speech or statement).
-- **Column 15: the extracted justification**
+My task was to implement a model to detect/predict fake-news from the given data-set. For this purpose, I was given the [LIAR\_PLUS data-set](https://github.com/Tariq60/LIAR-PLUS). The LIAR\_PLUS data-set is used for fact-checking and fake news detection released in the [original author's paper](http://aclweb.org/anthology/W18-5513).
 
-Our justification extraction method is done as follows:
-- Get all sentences in the 'Our Ruling' section of the report if it exists or get the last five sentences.
-- Remove any sentence that have the verdict and any verdict-related words. Verdict-related words are provided in the forbidden words file.
+# Setup
 
-**Please Note:**<br>
-The dataset in the current commit is the second version which was updated after publishing the paper. We increased the list of forbidden words in the second version after realizing that we have missed a few in v1. To find the results of our experiments on v2 of the dataset, please refer to the [poster](http://www.cs.columbia.edu/~tariq/slides/2018FEVER_Where_is_your_evidence_Poster.pdf). To find the results on v1 of the dataset, please refer to the [paper](http://aclweb.org/anthology/W18-5513). V1 of the dataset can be found in this [commit](https://github.com/Tariq60/LIAR-PLUS/tree/42d9791cee78f275a9f865387b958f4f29049241).
-<br><br>
-Note that we do not provide the full-text verdict report in this current version of the dataset,
-but you can use the following command to access the full verdict report and links to the source documents:<br>
+Before running the examples, create a virtual environment, and then install the dependencies. This would not mess with your system's local libraries, and maintain uniformity.
 ```
-wget http://www.politifact.com//api/v/2/statement/[ID]/?format=json
+$ # setup virtualenv
+$ pip install --user virtualenv #install virtualenv (ignore if already installed)
+$ python -m virtualenv ./.venv #setup the virtualenv
+$ source ./.venv/bin/activate #activate the env
+
+$ (.venv) # install requirements
+$ (.venv) pip install -r requirements.txt
 ```
-<br>
-The original sources retain the copyright of the data.
-Note that there are absolutely no guarantees with this data,
-and we provide this dataset "as is",
-but you are welcome to report the issues of the preliminary version
-of this data.
-<br>
-You are allowed to use this dataset for research purposes only.
-<br><br>
-Kindly cite our paper if you find this dataset useful.
 
-@inproceedings{alhindi2018your,<br>
-  title={Where is your Evidence: Improving Fact-checking by Justification Modeling},<br>
-  author={Alhindi, Tariq and Petridis, Savvas and Muresan, Smaranda},<br>
-  booktitle={Proceedings of the First Workshop on Fact Extraction and VERification (FEVER)},<br>
-  pages={85--90},<br>
-  year={2018}<br>
-}
+# Training and Testing
 
-v2.0 10/24/2018
+After setting up the virtual environment and the dependencies, now it is time to train and test the model. To run the code:
+```
+$ (.venv) # move to the scripts directory
+$ (.venv) # there is a training and testing script already made
+$ (.venv) # To run the training script:
+$ (.venv) ./train_six.sh
+$ (.venv) # It will train the model for the six-way classification.
+$ (.venv) ./test_six.sh
+$ (.venv) # It will test the model for the six-way classification.
+$ (.venv) # In order to run the model for binary classification:
+$ (.venv) ./train_binary.sh
+$ (.venv) ./test_binary.sh
+```
+By default the scripts run the Gaussian NB model. In order to run the code for other models (Bernoulli NB, Multinomial NB or Logistic Regression), open the corresponding scripts with a text editor, and un-comment the model you want to train. **Do not forget to comment the previous line.**
+
+If you need to run the python scripts yourself, you can do that by supplying the necessary arguments as well. As an example, in order to view the arguments of `naive_bayes.py` write:
+```
+$ (.venv) python naive_bayes.py -h
+usage: naive_bayes.py [-h] [--binary BOOLEAN] [--train BOOLEAN]
+                      [--test BOOLEAN] [--trainfile FILE] [--testfile FILE]
+                      [--model FILE] [--nb_type STRING]
+
+optional arguments:
+  -h, --help        show this help message and exit
+  --binary BOOLEAN  If you want to do a binary classification, or the default
+                    six-way classification.
+  --train BOOLEAN   Want to train the model? Set as True, if you want to...
+  --test BOOLEAN    Want to test the model? Set as True, if you want to...
+  --trainfile FILE  Specify the location of the training dataset
+  --testfile FILE   Specify the location of the testing dataset
+  --model FILE      Specify the location of the trained model
+  --nb_type STRING  Values: GaussianNB or BernoulliNB or MultinomialNB.
+```
+Provide the necessary arguments and then you're good to go and run the scripts. :D
