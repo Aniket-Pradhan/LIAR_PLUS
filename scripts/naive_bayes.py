@@ -167,6 +167,7 @@ class naive_bayes_model:
 		if self.train:
 			print("TRAINING...")
 			self.train_data()
+			print("TRAINED.")
 
 		elif self.test:
 			print("TESTING...")

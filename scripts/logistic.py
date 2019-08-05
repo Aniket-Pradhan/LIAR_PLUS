@@ -10,6 +10,11 @@ from sklearn import preprocessing
 from sklearn.linear_model import LogisticRegression
 import time
 
+def warn(*args, **kwargs):
+    pass
+import warnings
+warnings.warn = warn
+
 class naive_bayes_model:
 	def read_data(self, filename):
 		with open(filename, 'r') as file:
@@ -155,6 +160,7 @@ class naive_bayes_model:
 		if self.train:
 			print("TRAINING...")
 			self.train_data()
+			print("TRAINED.")
 
 		elif self.test:
 			print("TESTING...")
