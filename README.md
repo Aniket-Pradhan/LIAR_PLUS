@@ -60,3 +60,22 @@ $ (.venv) cd scripts/
 $ (.venv) python gui.py
 ```
 That's it. The buttons will make it easy for you to train and test the models on-the-go, without command-line access. Do give it a try.
+
+# TF-IDF Word Embeddings
+I also implemented the TF-IDF word embeddings for the current data-set. The same can be found in `scripts/tf_idf.py`. In order to run the script:
+```
+$ (.venv) cd scripts/
+$ (.venv) python tf_idf.py
+usage: tf_idf.py [-h] -f FILE [-r BOOLEAN]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -f FILE, --file FILE  Specify the location of the dataset to analyze
+  -r BOOLEAN            If you want to re-iterate and generate tf-idf again.
+```
+I ran the script on the training data, and was able to generate the embeddings after running for some time on a high performance computer (HPC). The saved data can be found in `temp_logs/` directory. In order to utilize the previously generated data, one can simply run the script and set the `-r` argument as `false` (by default), since it takes very long to process the huge training data. If you want to re-generate the data again, set the `-r` argument as `true`
+As an example:
+```
+$ (.venv) python tf_idf.py -f ../dataset/train2.tsv -r true # to regenerate the data
+$ (.venv) python tf_idf.py -f ../dataset/train2.tsv -r true # to used the saved data
+```
