@@ -51,4 +51,12 @@ optional arguments:
   --model FILE      Specify the location of the trained model
   --nb_type STRING  Values: GaussianNB or BernoulliNB or MultinomialNB.
 ```
-Provide the necessary arguments and then you're good to go and run the scripts. :D
+Provide the necessary arguments and then you're good to go and run the scripts.
+
+### Another easy way to run the script?
+There is a GUI for the given application as well. How to run it?
+```
+$ (.venv) cd scripts/
+$ (.venv) python gui.py
+```
+That's it. The buttons will make it easy for you to train and test the models on-the-go, without command-line access. Do give it a try.
